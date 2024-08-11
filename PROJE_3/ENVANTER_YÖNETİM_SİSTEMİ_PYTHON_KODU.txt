@@ -1,0 +1,77 @@
+class Item:
+    def __init__(self, name, quantity, min_quantity):
+        self.name = name
+        self.quantity = quantity
+        self.min_quantity = min_quantity
+
+    def update_quantity(self, quantity):
+        self.quantity += quantity
+
+    def __str__(self):
+        status = "OK" if self.quantity >= self.min_quantity else "Low Stock"
+        return f"{self.name}: {self.quantity} (Min: {self.min_quantity}) - {status}"
+
+class Inventory:
+    def __init__(self):
+        self.items = {}
+
+    def add_item(self, name, quantity, min_quantity):
+        if name in self.items:
+            print(f"{name} already exists. Use update_item to change the quantity.")
+        else:
+            self.items[name] = Item(name, quantity, min_quantity)
+
+    def update_item(self, name, quantity):
+        if name in self.items:
+            self.items[name].update_quantity(quantity)
+        else:
+            print(f"{name} not found in inventory.")
+
+    def remove_item(self, name):
+        if name in self.items:
+            del self.items[name]
+        else:
+            print(f"{name} not found in inventory.")
+
+    def display_inventory(self):
+        for item in self.items.values():
+            print(item)
+
+def main():
+    inventory = Inventory()
+    while True:
+        print("\nEnvanter Yönetim Sistemi")
+        print("1. Öğeye Ekle")
+        print("2. Öğeye Güncelle")
+        print("3. Öğeyi Sil")
+        print("4. Envanteri Göster")
+        print("5. Çıkış")
+        choice = input("Bir seçenek seçin: ")
+
+        if choice == '1':
+            name = input("Öğe adı: ")
+            quantity = int(input("Miktar: "))
+            min_quantity = int(input("Minimum miktar: "))
+            inventory.add_item(name, quantity, min_quantity)
+
+        elif choice == '2':
+            name = input("Öğe adı: ")
+            quantity = int(input("Güncellenecek miktar (pozitif veya negatif): "))
+            inventory.update_item(name, quantity)
+
+        elif choice == '3':
+            name = input("Silinecek öğe adı: ")
+            inventory.remove_item(name)
+
+        elif choice == '4':
+            inventory.display_inventory()
+
+        elif choice == '5':
+            print("Çıkış yapılıyor...")
+            break
+
+        else:
+            print("Geçersiz seçenek, lütfen tekrar deneyin.")
+
+if __name__ == "__main__":
+    main()

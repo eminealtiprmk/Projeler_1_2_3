@@ -1,0 +1,51 @@
+import pandas as pd
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+
+
+boston = fetch_openml(data_id=531)
+
+
+df = pd.DataFrame(data=boston.data, columns=boston.feature_names)
+df['PRICE'] = boston.target  # Ev fiyatları (TARGET)
+
+
+print("Eksik değerler:")
+print(df.isnull().sum())
+
+
+X = df.drop("PRICE", axis=1)
+y = df["PRICE"]
+
+
+imputer = SimpleImputer(strategy='mean')
+X = imputer.fit_transform(X)
+
+
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+
+y_pred = model.predict(X_test)
+
+
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"Mean Squared Error: {mse}")
+print(f"R-squared: {r2}")
+
+print("Sonuçların Yorumlanması:")
+print(f"Modelin Mean Squared Error (MSE) değeri: {mse}, bu değer modelin tahminlerinde ortalama karesel hata miktarını gösterir. MSE'nin düşük olması, modelin daha iyi performans gösterdiği anlamına gelir.")
+print(f"Modelin R-squared (R²) değeri: {r2}, bu değer bağımsız değişkenlerin bağımlı değişkeni ne kadar açıkladığını gösterir. R² değeri 1'e ne kadar yakınsa, model o kadar iyi demektir.")
